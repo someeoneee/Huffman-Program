@@ -1,6 +1,9 @@
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.ObjectInputStream;
 
 /*
  * 
@@ -10,23 +13,27 @@ import java.io.OutputStream;
 
 public class Decompress_a_File {
 	public static void main(String[] args) {
-		/** Checks arguments and gets file names if valid */
+		/** Checks arguments */
 		if (args.length != 2) {
 			System.out.println("Usage: java Decompress_a_File compressedFile.txt decompressedFile.txt");
 			System.exit(1);
 		}
 		
-		/** Varible for inputted compressed file */
+		/** Checks if file exists */
 		File compressedFile = new File(args[0]);
 		if (!compressedFile.exists()) {
 			System.out.println("File " + args[0] + " does not exist");
 			System.exit(2);
 		}
+		
+		/** Creates FileInputStream to read file */
+		FileInputStream input = new FileInputStream(args[0]);
+		ObjectInputStream count = new ObjectInputStream(input);
+		String[] code = (String[])count.readObject();
 	}
 	
-	/**
-	 * Get Huffman codes for the characters This method is called once after a
-	 * Huffman tree is built
+	/** Get Huffman codes for the characters 
+	 * This method is called once after a Huffman tree is built
 	 */
 	public static String[] getCode(Tree.Node root) {
 		if (root == null)
@@ -52,17 +59,18 @@ public class Decompress_a_File {
 	/** Get a Huffman tree from the codes */
 	public static Tree getHuffmanTree(int[] counts) {
 	// Create a heap to hold trees
-		Heap<Tree> heap = new Heap<Tree>(); // Defined in Listing 24.10
+		Heap<Tree> heap = new Heap<Tree>(); // Defined in Listing 23.9
 	    for (int i = 0; i < counts.length; i++) {
 	    	if (counts[i] > 0)
 	    		heap.add(new Tree(counts[i], (char) i)); // A leaf node tree
 	    }
 
 	    while (heap.getSize() > 1) {
-	    	Tree t1 = heap.remove(); // Remove the smallest weight tree
+	    	Tree t1 = heap.remove(); // Remove the smallest-weight tree
 	    	Tree t2 = heap.remove(); // Remove the next smallest weight
 	    	heap.add(new Tree(t1, t2)); // Combine two trees
 	    }
+		
 	    return heap.remove(); // The final tree
 	}
 
@@ -92,8 +100,7 @@ public class Decompress_a_File {
 			root = new Node(weight, element);
 		}
 
-		@Override
-		/** Compare trees based on their weights */
+		@Override /** Compare trees based on their weights */
 		public int compareTo(Tree t) {
 			if (root.weight < t.root.weight) // Purposely reverse the order
 				return 1;
@@ -238,21 +245,21 @@ public class Decompress_a_File {
 			if (list.size() == 0)	return null;
 
 			E removedObject = list.get(0);
-		    list.set(0, list.get(list.size() - 1));
-		    list.remove(list.size() - 1);
+			list.set(0, list.get(list.size() - 1));
+		    	list.remove(list.size() - 1);
 
-		    int currentIndex = 0;
-		    while (currentIndex < list.size()) {
-		    	int leftChildIndex = 2 * currentIndex + 1;
-		    	int rightChildIndex = 2 * currentIndex + 2;
+		    	int currentIndex = 0;
+		    	while (currentIndex < list.size()) {
+		    		int leftChildIndex = 2 * currentIndex + 1;
+		    		int rightChildIndex = 2 * currentIndex + 2;
 
-		    	// Find the maximum between two children
-		    	if (leftChildIndex >= list.size())	break; // The tree is a heap
-		    	int maxIndex = leftChildIndex;
-		    	if (rightChildIndex < list.size()) {
-		    		if (list.get(maxIndex).compareTo(list.get(rightChildIndex)) < 0) {
-		    			maxIndex = rightChildIndex;
-		    		}
+		    		// Find the maximum between two children
+		    		if (leftChildIndex >= list.size())	break; // The tree is a heap
+		    		int maxIndex = leftChildIndex;
+		    		if (rightChildIndex < list.size()) {
+		    			if (list.get(maxIndex).compareTo(list.get(rightChildIndex)) < 0) {
+		    				maxIndex = rightChildIndex;
+		    			}
 		    	}
 
 		    	// Swap if the current node is less than the maximum
