@@ -1,3 +1,7 @@
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+
 /*
  * 
  * 
@@ -10,6 +14,13 @@ public class Decompress_a_File {
 		if (args.length != 2) {
 			System.out.println("Usage: java Decompress_a_File compressedFile.txt decompressedFile.txt");
 			System.exit(1);
+		}
+		
+		/** Varible for inputted compressed file */
+		File compressedFile = new File(args[0]);
+		if (!compressedFile.exists()) {
+			System.out.println("File " + args[0] + " does not exist");
+			System.exit(2);
 		}
 	}
 	
@@ -121,7 +132,7 @@ public class Decompress_a_File {
 		//A private valriable of type int is declared.
 		private int count = 0;
 
-		//The function to assign the output of the outputstream is     declared.
+		//The function to assign the output of the outputstream is declared.
 		public BitOutputStream(OutputStream out) {
 			this.out = out;
 		}
@@ -153,18 +164,18 @@ public class Decompress_a_File {
 		public void close() throws IOException {
 
 			//declare the variable of type int
-		    int num = 0;
+		    	int num = 0;
 
-		    //for loop to parse through the stream
-		    for (int index = 0; index < 8; index++){
-		    	num = 2*num + (this.buffer[index] ? 1 : 0);
-		    }
+		    	//for loop to parse through the stream
+		    	for (int index = 0; index < 8; index++){
+		    		num = 2*num + (this.buffer[index] ? 1 : 0);
+		    	}
 
-		    //write method is called.
-		    this.out.write(num - 128);
+		    	//write method is called.
+		    	this.out.write(num - 128);
 
-		    //close method is called.
-		    this.out.close();
+		    	//close method is called.
+		    	this.out.close();
 		}
 
 		//method for decompression is created.
