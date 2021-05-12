@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.ObjectInputStream;
+import java.io.DataOutputStream;
 
 /*
  * 
@@ -28,8 +29,18 @@ public class Decompress_a_File {
 		
 		/** Creates FileInputStream to read file */
 		FileInputStream input = new FileInputStream(args[0]);
-		ObjectInputStream count = new ObjectInputStream(input);
-		String[] code = (String[])count.readObject();
+		
+		/** Creates Stringbuilder to store text read from the source file */
+		StringBuilder text = new StringBuilder("");
+		int bit = 0;
+		while ((bit = input.read()) != -1) {
+			text.append(bit); //FOR NOW IT APPENDS ASCII VALUE 
+		}
+		input.close();
+		
+		DataOutputStream output = new DataOutputStream(new FileOutputStream(args[1])); // Create new file from args[1]
+		output.write(text.toString().getBytes()); // Writes new text to file
+		output.close();
 	}
 	
 	/** Get Huffman codes for the characters 
